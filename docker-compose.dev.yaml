@@ -4,7 +4,7 @@ services:
 
   # Strapi - Content Manage System (CMS)
   strapi:
-    image: heg0dmsk/strapi:4.1.6-alpine
+    image: heg0dmsk/strapi:v4.1.6-alpine
     container_name: strapi
     environment:
       DATABASE_CLIENT: postgres
