@@ -1,0 +1,97 @@
+name: Build And Push Docker Images
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - strapi.version
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build And Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1.2.0
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1.6.0
+      - 
+        name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - 
+        name: Get strapi version
+        id: strapi
+        run: |
+          echo ::set-output name=version::$(< strapi.version)
+      -  
+        name: Get node version
+        id: node
+        run: |
+          echo ::set-output name=version::$(< node.version)
+      -  
+        name: Set Docker image metadata
+        id: docker_meta
+        uses: crazy-max/ghaction-docker-meta@v3.6.2
+        with:
+          images: heg0dmsk/strapi, ghcr.io/heg0dmsk/strapi
+          flavor: |
+            latest=true
+          tags: |
+            ${{ steps.strapi.outputs.version }}-alpine
+          labels: |
+            org.opencontainers.image.version=${{ steps.strapi.outputs.version }}-alpine
+            org.opencontainers.image.url=https://hub.docker.com/r/heg0dmsk/strapi
+            org.opencontainers.image.source=https://github.com/Heg0Dmsk/strapi-docker
+      - 
+        name: Login to DockerHub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1.14.1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - 
+        name: Log in to GitHub Package Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v1.14.1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CR_PAT }}   
+      - 
+        name: Build and push Docker image
+        uses: docker/build-push-action@v2.10.0
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+          
+        # This ugly bit is necessary if you don't want your cache to grow forever
+        # till it hits GitHub's limit of 5GB.
+        # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
