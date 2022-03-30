@@ -1,4 +1,4 @@
-name: Update webhook
+name: Update Strapi Version
 
 on:
   schedule:
