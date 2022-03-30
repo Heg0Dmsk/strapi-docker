@@ -27,10 +27,7 @@ RUN apk --update add --no-cache tini \
                         libpng-dev \
                         nasm bash \
     # Add the specified version of strapi and required database packages
-    && yarn global add @strapi/strapi@${STRAPI_VERSION} \
-                    pg \
-                    knex \
-                    strapi-connector-bookshelf
+    && yarn global add @strapi/strapi@${STRAPI_VERSION} 
 
 # Copy entrypoint script into the container
 COPY docker-entrypoint.sh /usr/local/bin/
