@@ -15,20 +15,11 @@ jobs:
   build:
     name: Build And Push Docker Images
     runs-on: ubuntu-latest
-    env:    
-      ENV NODE_VERSION: $(< node.version)
-      STRAPI_VERSION: $(< strapi.version)
     steps:
       -
         name: Checkout
         uses: actions/checkout@v3
       -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v1.2.0
-      -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1.6.0
-      - 
         name: Get strapi version
         id: strapi
         run: |
@@ -39,20 +30,6 @@ jobs:
         run: |
           echo ::set-output name=version::$(< node.version)
       -  
-        name: Set Docker image metadata
-        id: docker_meta
-        uses: crazy-max/ghaction-docker-meta@v3.6.2
-        with:
-          images: heg0dmsk/strapi, ghcr.io/heg0dmsk/strapi
-          flavor: |
-            latest=true
-          tags: |
-            ${{ steps.strapi.outputs.version }}-alpine
-          labels: |
-            org.opencontainers.image.version=${{ steps.strapi.outputs.version }}-alpine
-            org.opencontainers.image.url=https://hub.docker.com/r/heg0dmsk/strapi
-            org.opencontainers.image.source=https://github.com/Heg0Dmsk/strapi-docker
-      - 
         name: Login to DockerHub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1.14.1
@@ -67,7 +44,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.CR_PAT }}   
+      -                                                                                                                                                                                                                                             
+        id: build
+        run: docker build -t heg0dmsk/strapi:${{ steps.strapi.outputs.version }}-alpine -t heg0dmsk/strapi:latest -t ghcr.io/heg0dmsk/strapi:${{ steps.strapi.outputs.version }}-alpine -t ghcr.io/heg0dmsk/strapi:latest --build-arg NODE_VERSION=${{ steps.node.outputs.version }} --build-arg STRAPI_VERSION=${{ steps.strapi.outputs.version }} . 
+        shell: bash
       - 
+        id: push container images to dockerhub
+        run: docker image push --all-tags heg0dmsk/strapi
+        shell: bash
+      -
+        id: push container images to ghcr.io
+        run: docker image push --all-tags ghcr.io/heg0dmsk/strapi
+        shell: bash
+      -
         name: Build and push Docker image
         uses: docker/build-push-action@v2.10.0
         with:
