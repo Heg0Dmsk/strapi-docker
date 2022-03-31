@@ -1,17 +1,17 @@
-# Needed to set ENV variables before the production base image
-FROM alpine:3.15  as configuration
-
 # Defining build arguments with defaults
-# Defining build arguments as ENV to be able to successfully use them with Github Actions
 # default node version set to 14.19.1 to avoid incompabilites of newer and odler node versions with testes strapi versions
 # Default strapi version set to 4.0.0, as it is the minimum version which was tested successfully
-ENV NODE_VERSION=14.19.1 \
-    STRAPI_VERSION=4.1.6
-
+ARG     NODE_VERSION=14.19.1 \
+        STRAPI_VERSION=4.1.6
 
 # Base image for the container, node needed for the application
 # alpine node version is used in order to decrease size and potential security threats
 FROM node:${NODE_VERSION}-alpine as production
+
+# Set Container Labels
+LABEL   org.opencontainers.image.version=${STRAPI_VERSION}-alpine \
+        org.opencontainers.image.url=https://hub.docker.com/r/heg0dmsk/strapi \
+        org.opencontainers.image.source=https://github.com/Heg0Dmsk/strapi-docker
 
 # Specify and create working directory for Strapi
 # - will contain the entire application including configuration and media assets
