@@ -30,7 +30,7 @@ RUN apk --update add --no-cache tini \
     && yarn global add @strapi/strapi@${STRAPI_VERSION} --network-timeout 100000 
 
 # Copy entrypoint script into the container and change Ownership to non-root UID and GID 1001
-COPY --chown=10001:10001 docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh /usr/local/bin/
+COPY --chown=10001:10001 docker-entrypoint.sh /usr/local/bin/
 
 # Change Ownership to non-root UID and GID 1001
 RUN chown 10001:10001 -R /srv/app \
