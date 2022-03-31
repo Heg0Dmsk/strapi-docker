@@ -27,10 +27,15 @@ RUN apk --update add --no-cache tini \
                         libpng-dev \
                         nasm bash \
     # Add the specified version of strapi and required database packages
-    && yarn global add @strapi/strapi@${STRAPI_VERSION} --network-timeout 100000
+    && yarn global add @strapi/strapi@${STRAPI_VERSION} --network-timeout 100000 
 
-# Copy entrypoint script into the container
-COPY docker-entrypoint.sh /usr/local/bin/
+# Copy entrypoint script into the container and change Ownership to non-root UID and GID 1001
+COPY chown=10001:10001 docker-entrypoint.sh /usr/local/bin/
+
+# Change Ownership to non-root UID and GID 1001
+RUN chown 10001:10001 -R /srv/app \
+# Add allow executions inside the working dirctory and for the entrypoint script
+    && chmod ug+rwx -R /usr/local/bin/docker-entrypoint.sh /srv/app
 
 # Specifies previously installed tini package as the primary entrypoint
 # and the entrypoint script as parameter so that tini calls it as a "secondary entrypoint"

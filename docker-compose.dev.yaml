@@ -4,15 +4,15 @@ services:
 
   # Strapi - Content Manage System (CMS)
   strapi:
-    image: heg0dmsk/strapi:v4.1.6-alpine
+    image: heg0dmsk/strapi:4.0.0-alpine
     container_name: strapi
     environment:
       DATABASE_CLIENT: postgres
-      DATABASE_NAME: db-name
-      DATABASE_HOST: strapi-postgres-hostname
+      DATABASE_NAME: dbName
+      DATABASE_HOST: StrapiPostgresHostname
       DATABASE_PORT: 5432
-      DATABASE_USERNAME: db-username
-      DATABASE_PASSWORD: db-password
+      DATABASE_USERNAME: dbUsername
+      DATABASE_PASSWORD: dbPassword
       NODE_ENV: development
       TZ: Europe/Berlin
     volumes:
@@ -20,18 +20,18 @@ services:
     ports:
       - '1337:1337'
     depends_on:
-      - strapi-postgres-hostname
+      - StrapiPostgresHostname
     networks:
       - strapi
 
   # Postgres Database for Strapi CMS
-  strapi-postgres-hostname:
+  StrapiPostgresHostname:
     image: postgres:14-alpine
     container_name: strapi-postgres
     environment:
-      POSTGRES_DB: db-name
-      POSTGRES_USER: db-username
-      POSTGRES_PASSWORD: db-password
+      POSTGRES_DB: dbName
+      POSTGRES_USER: dbUsername
+      POSTGRES_PASSWORD: dbPassword
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     networks:
