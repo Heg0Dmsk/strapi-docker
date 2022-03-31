@@ -1,13 +1,17 @@
+# Needed to set ENV variables before the production base image
+FROM alpine:3.15  as configuration
+
 # Defining build arguments with defaults
+# Defining build arguments as ENV to be able to successfully use them with Github Actions
 # default node version set to 14.19.1 to avoid incompabilites of newer and odler node versions with testes strapi versions
-# Default strapi version set to 4.1.5, as it is the minimum version which was tested successfully
-ARG NODE_VERSION=14.19.1 \
+# Default strapi version set to 4.0.0, as it is the minimum version which was tested successfully
+ENV NODE_VERSION=14.19.1 \
     STRAPI_VERSION=4.1.6
 
 
 # Base image for the container, node needed for the application
 # alpine node version is used in order to decrease size and potential security threats
-FROM node:${NODE_VERSION}-alpine
+FROM node:${NODE_VERSION}-alpine as production
 
 # Specify and create working directory for Strapi
 # - will contain the entire application including configuration and media assets
