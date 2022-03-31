@@ -49,11 +49,11 @@ jobs:
         run: docker build -t heg0dmsk/strapi:${{ steps.strapi.outputs.version }}-alpine -t heg0dmsk/strapi:latest -t ghcr.io/heg0dmsk/strapi:${{ steps.strapi.outputs.version }}-alpine -t ghcr.io/heg0dmsk/strapi:latest --build-arg NODE_VERSION=${{ steps.node.outputs.version }} --build-arg STRAPI_VERSION=${{ steps.strapi.outputs.version }} . 
         shell: bash
       - 
-        id: push container images to dockerhub
+        id: push-container-images-to-dockerhub
         run: docker image push --all-tags heg0dmsk/strapi
         shell: bash
       -
-        id: push container images to ghcr.io
+        id: push-container-images-to-ghcr
         run: docker image push --all-tags ghcr.io/heg0dmsk/strapi
         shell: bash
       -
