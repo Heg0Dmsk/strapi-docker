@@ -1,4 +1,4 @@
-[![CD Status](https://img.shields.io/github/workflow/status/Heg0Dmsk/strapi-docker/Build%20And%20Push%20Docker%20Images?label=Continious%20Deployment&style=for-the-badge)](https://github.com/Heg0Dmsk/strapi-docker)
+[![CD Status](https://img.shields.io/github/workflow/status/Heg0Dmsk/strapi-docker/Build%20And%20Push%20Container%20Images?label=Continious%20Deployment&style=for-the-badge)](https://github.com/Heg0Dmsk/strapi-docker)
 [![Last Commit](https://img.shields.io/github/last-commit/Heg0Dmsk/strapi-docker?style=for-the-badge&logoColor=white&logo=github)](https://github.com/Heg0Dmsk/strapi-docker)
 [![Pull Requests](https://img.shields.io/github/issues-pr/heg0dmsk/strapi-docker?style=for-the-badge)](https://github.com/Heg0Dmsk/strapi-docker)
 [![Repo Size](https://img.shields.io/github/repo-size/heg0dmsk/strapi-docker?style=for-the-badge)](https://github.com/Heg0Dmsk/strapi-docker)
@@ -6,8 +6,6 @@
 [![Pulls](https://img.shields.io/docker/pulls/heg0dmsk/strapi.svg?style=for-the-badge)](https://hub.docker.com/r/heg0dmsk/strapi)
 [![Version](https://img.shields.io/docker/v/heg0dmsk/strapi?style=for-the-badge)](https://hub.docker.com/r/heg0dmsk/strapi)
 [![License](https://img.shields.io/badge/LICENSE-MIT-blue?style=for-the-badge)](https://github.com/Heg0Dmsk/strapi-docker)
-
-# Description work in progress!!!
 
 # Table of Contents
 - [How to Use](#how_to_use)
@@ -31,7 +29,7 @@ Docker images are available from [Docker Hub](https://hub.docker.com/r/heg0dmsk/
 <a name="plugin-installation"></a> 
 ## Plugin installation
 
-To install Plugins, the install command needs to be copied from the in-app marketplace or the githup page of the plugin and executed inside the container shell
+To install Plugins, the install command needs to be copied from the in-app marketplace or the githup page of the plugin and executed inside the container shell.
 
 <a name="not-use-for-production"></a> 
 ## Do not use this image for production
@@ -53,15 +51,15 @@ services:
 
   # Strapi - Content Manage System (CMS)
   strapi:
-    image: heg0dmsk/strapi:4.1.6-alpine
+    image: heg0dmsk/strapi:4.0.0-alpine
     container_name: strapi
     environment:
       DATABASE_CLIENT: postgres
-      DATABASE_NAME: db-name
-      DATABASE_HOST: strapi-postgres-hostname
+      DATABASE_NAME: dbName
+      DATABASE_HOST: StrapiPostgresHostname
       DATABASE_PORT: 5432
-      DATABASE_USERNAME: db-username
-      DATABASE_PASSWORD: db-password
+      DATABASE_USERNAME: dbUsername
+      DATABASE_PASSWORD: dbPassword
       NODE_ENV: development
       TZ: Europe/Berlin
     volumes:
@@ -69,18 +67,18 @@ services:
     ports:
       - '1337:1337'
     depends_on:
-      - strapi-postgres-hostname
+      - StrapiPostgresHostname
     networks:
       - strapi
 
   # Postgres Database for Strapi CMS
-  strapi-postgres-hostname:
+  StrapiPostgresHostname:
     image: postgres:14-alpine
     container_name: strapi-postgres
     environment:
-      POSTGRES_DB: db-name
-      POSTGRES_USER: db-username
-      POSTGRES_PASSWORD: db-password
+      POSTGRES_DB: dbName
+      POSTGRES_USER: dbUsername
+      POSTGRES_PASSWORD: dbPassword
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     networks:
@@ -97,7 +95,7 @@ docker-compose up -d
 ```
 
 <a name="updating"></a> 
-# Updating
+## Updating
 
 The process to update the container when a new image is available is dependent on how you set it up initially. If you initially used Docker Compose, run the following commands from the directory containing your `docker-compose.yml` file: 
 
