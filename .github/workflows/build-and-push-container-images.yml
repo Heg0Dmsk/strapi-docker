@@ -15,7 +15,9 @@ jobs:
   build:
     name: Build And Push Docker Images
     runs-on: ubuntu-latest
-
+    env:    
+      ENV NODE_VERSION: $(< node.version)
+      STRAPI_VERSION: $(< strapi.version)
     steps:
       -
         name: Checkout
